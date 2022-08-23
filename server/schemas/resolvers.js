@@ -3,8 +3,17 @@ const { User, Book } = require("../models");
 
 const resolvers = {
   Query: {
-    // logic here remains the same
+    // get all users
+    users: async () => {
+      return User.find().select("-__v -password");
+    },
+
+    // get a user by username
+    user: async (parent, { username }) => {
+      return User.findOne({ username }).select("-__v -password");
+    },
   },
+
   Mutation: {
     addUser: async (parent, args) => {
       const user = await User.create(args);
