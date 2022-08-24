@@ -1,6 +1,7 @@
 // Resolvers are simply the functions we connect to each query or mutation type definition that perform the CRUD actions that each query or mutation is expected to perform.
 const { User, Book } = require("../models");
 const { AuthenticationError } = require("apollo-server-express");
+const { signToken } = require("../utils/auth");
 
 const resolvers = {
   Query: {
@@ -20,8 +21,9 @@ const resolvers = {
     // add user resolver
     addUser: async (parent, args) => {
       const user = await User.create(args);
+      const token = signToken(user);
 
-      return user;
+      return { token, user };
     },
     login: async (parent, { email, password }) => {
       const user = await User.findOne({ email });
@@ -36,8 +38,10 @@ const resolvers = {
         throw new AuthenticationError("Incorrect credentials");
       }
 
-      return user;
+      const token = signToken(user);
+      return { token, user };
     },
+
     saveBook: async (parent, { bookData }, context) => {
       console.log(context.user);
       if (context.user) {
