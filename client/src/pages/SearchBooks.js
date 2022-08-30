@@ -90,6 +90,7 @@ const SearchBooks = () => {
           });
         },
       });
+      // save book id once saved
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);
     } catch (err) {
       console.error(err);
